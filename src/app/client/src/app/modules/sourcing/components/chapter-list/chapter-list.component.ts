@@ -119,6 +119,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private portalVersion: string;
   public defaultFileSize: any;
   public defaultVideoSize: any;
+  filterConfig;
+  filterValues = {};
+  showFiltersModal = false;
+  masterCollectionHierarchy = [];
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -406,6 +411,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.searchConfig = objectCategoryDefinition.forms.searchConfig;
+          this.filterConfig = objectCategoryDefinition.forms.filterConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -642,6 +648,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.showError = false;
     this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
   }
+
   getFolderLevelCount(collections) {
     let status = this.sampleContent ? ['Review', 'Draft'] : [];
     let prevStatus;
@@ -1059,7 +1066,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         action: 'creation',
         programContext: _.get(this.chapterListComponentInput, 'programContext')
       }
-      
+
       const createContentReq = this.helperService.createContent(creationInput);
       createContentReq.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
@@ -1661,4 +1668,61 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     };
   }
 
+  openFilter() {
+    let isFirstTime = true;
+    _.forEach(this.filterConfig.properties, (formFieldCategory) => {
+      if (formFieldCategory.code === 'topic') {
+        formFieldCategory.terms = this.sessionContext.topicList;
+      }
+      if (this.filterValues[formFieldCategory.code]) {
+        isFirstTime = false;
+        formFieldCategory.default = this.filterValues[formFieldCategory.code];
+      }
+    });
+    if (isFirstTime) {
+      this.masterCollectionHierarchy = _.cloneDeep(this.collectionHierarchy);
+    }
+    this.showFiltersModal = true;
+  }
+
+  filterValueChanges(event) {
+    this.filterValues = event;
+  }
+
+  applyFilter(resetFilter?) {
+    this.collectionHierarchy = _.cloneDeep(this.masterCollectionHierarchy);
+    this.showFiltersModal = false;
+    if (resetFilter) {
+      this.filterValues = {};
+      this.masterCollectionHierarchy = [];
+      return;
+    }
+
+    _.forEach(this.collectionHierarchy, collectionHierarchy => {
+      const filteredLeaf = [];
+      _.forEach(collectionHierarchy.leaf, leaf => {
+        _.forOwn(this.filterValues, (value, key) => {
+          if (value && leaf.hasOwnProperty(key)) {
+            if (_.isArray(value) && _.isArray(leaf[key])) {
+              if (_.intersection(value, leaf[key]).length) {
+                filteredLeaf.push(leaf);
+              }
+            } else if (_.isArray(value) && !_.isArray(leaf[key])) {
+              if (value.indexOf(leaf[key]) !== -1) {
+                filteredLeaf.push(leaf);
+              }
+            } else if (!_.isArray(value) && _.isArray(leaf[key])) {
+              if (leaf[key].indexOf(value) !== -1) {
+                filteredLeaf.push(leaf);
+              }
+            } else if (value === leaf[key]) {
+              filteredLeaf.push(leaf);
+            }
+          }
+        });
+      });
+
+      collectionHierarchy.leaf = filteredLeaf;
+    });
+  }
 }

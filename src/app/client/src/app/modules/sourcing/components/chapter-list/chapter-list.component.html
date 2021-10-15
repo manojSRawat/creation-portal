@@ -193,6 +193,10 @@
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService?.frmelmnts?.lbl?.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | interpolate:'{contentTypeUnit}': firstLevelFolderLabel}} </span>
             <div class="d-flex">
+              <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="openFilter()">
+                <i class="filter icon"></i>
+                {{resourceService?.frmelmnts?.btn?.applyFilter}}
+              </button>
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
                 <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
               </div>
@@ -408,7 +412,25 @@
 		</button>
 	</div>
 </sui-modal>
-
+<sui-modal *ngIf="showFiltersModal" [mustScroll]="true" #modal [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal applyFilter-modal"
+           appBodyScroll (dismissed)="showFiltersModal = false">
+  <div class="sb-modal-header">
+    {{resourceService?.frmelmnts?.lbl?.applyFilters}}
+  </div>
+  <div class="sb-modal-content">
+    <sb-dynamic-form *ngIf="this.filterConfig.properties" [config]="this.filterConfig.properties"
+                     (valueChanges)="filterValueChanges($event)">
+    </sb-dynamic-form>
+  </div>
+  <div class="sb-modal-actions py-20">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilter()">
+      {{resourceService?.frmelmnts?.btn?.apply}}
+    </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="applyFilter('resetFilter')">
+      {{resourceService?.frmelmnts?.btn?.reset}}
+    </button>
+  </div>
+</sui-modal>
 <sui-modal *ngIf="showRemoveConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showRemoveConfirmationModal = false" #modal>
   <div class="sb-modal-header">
