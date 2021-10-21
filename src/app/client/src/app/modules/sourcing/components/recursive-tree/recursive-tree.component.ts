@@ -20,6 +20,7 @@ export class RecursiveTreeComponent implements OnInit {
   @Input() originalCollectionData;
   @Input() level;
   @Input() selectedStatus;
+  @Input() dynamicHeaders;
   @Output() emitSelectedNode = new EventEmitter<any>();
   @Output() nodeMeta = new EventEmitter<any>();
   public showModal = false;
@@ -166,6 +167,17 @@ export class RecursiveTreeComponent implements OnInit {
   goToAddLibrary(identifier) {
     // tslint:disable-next-line:max-line-length
     this.router.navigateByUrl(`/contribute/program/${this.sessionContext.programId}/textbook/${this.sessionContext.collection}/${identifier}`);
+  }
+
+  getSerialNumber(collection, currentIndex) {
+    let serialNumber = 1;
+    for (let i = 0; i < currentIndex; i++) {
+      const content = collection.leaf[i];
+      if (content.contentVisibility === true) {
+        serialNumber++;
+      }
+    }
+    return serialNumber;
   }
 
 }

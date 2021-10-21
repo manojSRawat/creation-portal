@@ -125,16 +125,29 @@
     </div>
     <div content>
       <div class="chapter-lists level1" *ngIf="collection.leaf">
+        <div class="header chapter-lists--item">
+          <span class="item-name item-sno">S.No</span>
+          <span class="item-name">Name</span>
+          <ng-container *ngFor="let header of dynamicHeaders">
+            <span class="item-name">{{header.label}}</span>
+          </ng-container>
+          <span class="item-status">Contributor</span>
+          <span class="item-status">Status</span>
+        </div>
         <ng-container *ngFor="let content of collection.leaf; let ind = index">
           <div class="chapter-lists--item"
-          *ngIf="content.contentVisibility === true && includes(sourcingOrgReviewer, selectedStatus, content.sourcingStatus || content.status)"
+          *ngIf="content.contentVisibility === true"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview_resource', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
           [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
+            <span class="item-name item-sno"> {{getSerialNumber(collection, ind)}}</span>
             <span class="item-name"> {{content.name}}</span>
+            <ng-container *ngFor="let header of dynamicHeaders">
+              <span class="item-name">{{content[header.key] || '-'}}</span>
+            </ng-container>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status" *ngIf="!content.sampleContent">
               <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>

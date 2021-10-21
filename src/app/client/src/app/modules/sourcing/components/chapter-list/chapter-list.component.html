@@ -193,7 +193,7 @@
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService?.frmelmnts?.lbl?.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | interpolate:'{contentTypeUnit}': firstLevelFolderLabel}} </span>
             <div class="d-flex">
-              <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="openFilter()">
+              <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="openFilter()" *ngIf="this.filterConfig">
                 <i class="filter icon"></i>
                 {{resourceService?.frmelmnts?.btn?.applyFilter}}
               </button>
@@ -215,7 +215,7 @@
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
-              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption" [originalCollectionData]="originalCollectionData"
+              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption" [originalCollectionData]="originalCollectionData" [dynamicHeaders]="dynamicHeaders"
               [selectedStatus]="selectedStatusOptions" (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
             </sui-accordion>
           </div>
@@ -418,7 +418,7 @@
     {{resourceService?.frmelmnts?.lbl?.applyFilters}}
   </div>
   <div class="sb-modal-content">
-    <sb-dynamic-form *ngIf="this.filterConfig.properties" [config]="this.filterConfig.properties"
+    <sb-dynamic-form *ngIf="this.filterConfig" [config]="this.filterConfig"
                      (valueChanges)="filterValueChanges($event)">
     </sb-dynamic-form>
   </div>

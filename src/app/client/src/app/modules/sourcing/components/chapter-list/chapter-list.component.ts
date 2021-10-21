@@ -120,6 +120,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public defaultFileSize: any;
   public defaultVideoSize: any;
   filterConfig;
+  dynamicHeaders = [];
   filterValues = {};
   showFiltersModal = false;
   masterCollectionHierarchy = [];
@@ -150,6 +151,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.changeView();
     });
     this.currentStage = 'chapterListComponent';
+
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
     this.setUserAccess();
@@ -228,6 +230,109 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+    // this.filterConfig = _.get(this.collection, 'searchConfig', null);
+    // this.dynamicHeaders = _.get(this.collection, 'headers', []);
+    this.filterConfig = [
+      {
+        "code": "status",
+        "editable": true,
+        "displayProperty": "Editable",
+        "dataType": "text",
+        "renderingHints": {
+          "semanticColumnWidth": "six"
+        },
+        "description": "Status",
+        "index": 2,
+        "label": "Status",
+        "default": 0,
+        "name": "Status",
+        "inputType": "select",
+        "terms": [
+          {
+            "name": "Live"
+          },
+          {
+            "name": "Corrections Pending"
+          },
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          },
+          {
+            "name": "Draft"
+          }
+        ],
+        "placeholder": "Select Status"
+      },
+      {
+        "code": "questionCategories",
+        "editable": true,
+        "displayProperty": "Editable",
+        "dataType": "text",
+        "renderingHints": {
+          "semanticColumnWidth": "six"
+        },
+        "description": "Question Types",
+        "index": 2,
+        "label": "Question Types",
+        "default": 0,
+        "required": true,
+        "name": "Question Types",
+        "inputType": "select",
+        "terms": [
+          {
+            "name": "Objective"
+          },
+          {
+            "name": "VSA"
+          },
+          {
+            "name": "SA"
+          },
+          {
+            "name": "LA"
+          },
+          {
+            "name": "MCQ"
+          }
+        ],
+        "placeholder": "Question Types"
+      },
+      {
+        "code": "bloomsLevel",
+        "editable": true,
+        "displayProperty": "Editable",
+        "dataType": "text",
+        "renderingHints": {
+          "semanticColumnWidth": "twelve"
+        },
+        "label": "Skills Tested",
+        "required": true,
+        "name": "Learning Levels",
+        "index": 2,
+        "inputType": "select",
+        "placeholder": "Select Skill Type",
+        "default": 0,
+        "terms": [
+          {
+            "name": "remember"
+          },
+          {
+            "name": "understand"
+          },
+          {
+            "name": "apply"
+          }
+        ]
+      }
+    ];
+    this.dynamicHeaders = [
+      {"label": "Question Type", "key": "questionCategories"},
+      {"label": "Skill Tested", "key": "bloomsLevel"},
+      {"label": "Topic", "key": "topic"}
+    ];
   }
 
   setUserAccess() {
@@ -411,7 +516,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.searchConfig = objectCategoryDefinition.forms.searchConfig;
-          this.filterConfig = objectCategoryDefinition.forms.filterConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -1670,7 +1774,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   openFilter() {
     let isFirstTime = true;
-    _.forEach(this.filterConfig.properties, (formFieldCategory) => {
+    _.forEach(this.filterConfig, (formFieldCategory) => {
       if (formFieldCategory.code === 'topic') {
         formFieldCategory.terms = this.sessionContext.topicList;
       }
