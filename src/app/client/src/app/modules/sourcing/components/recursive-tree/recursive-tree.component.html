@@ -147,8 +147,8 @@
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
             <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
             <span class="item-name"> {{content.name}}<br />
-              <ng-container *ngFor="let tag of tags">
-                <span *ngIf="content[tag]" class="item-tag">{{content[tag]}}</span>
+              <ng-container *ngFor="let tag of tags.slice().reverse()">
+                <span *ngIf="content[tag]" [ngClass]="{'item-tag-topic': tag === 'topic', 'item-tag-learningOutcome' : tag === 'learningOutcome', 'item-tag' : tag === 'subject' }">{{content[tag]}}</span>
               </ng-container>
             </span>
             <ng-container *ngIf="dynamicHeadersEnabled">
