@@ -184,4 +184,10 @@ export class RecursiveTreeComponent implements OnInit {
     return serialNumber;
   }
 
+  alphabeticalSort(a, b) {
+    if (a.firstname < b.firstname) { return -1; }
+    if (a.firstname > b.firstname) { return 1; }
+    return 0;
+  }
+
 }
