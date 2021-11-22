@@ -69,6 +69,7 @@ export class RecursiveTreeComponent implements OnInit {
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     this.userId = this.userService.userid;
     this.showActionMenu = this.visibility && this.visibility['showActionMenu'];
+    this.tags.sort((a, b) => (a > b ? -1 : 1));
   }
 
   hasAccessFor(roles: Array<string>) {

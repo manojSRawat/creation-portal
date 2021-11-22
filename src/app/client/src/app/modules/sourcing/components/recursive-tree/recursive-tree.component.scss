@@ -97,6 +97,9 @@
     @extend .item-tag;
     background: $secondary-100;
   }
+  .item-tag-subject{
+    @extend .item-tag;
+  }
 
   .item-header{
     font-weight: 700;
