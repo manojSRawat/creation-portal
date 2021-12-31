@@ -148,7 +148,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
-    this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
+      this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
     (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
   }
 
@@ -156,11 +156,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
-    });
-    this.helperService.getDynamicHeaders(this.configUrl).subscribe((state: any) => {
-      if(_.has(state, "headers")){
-        this.dynamicHeaders = state.headers;
-      }
     });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
@@ -196,6 +191,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
     }
+    this.helperService.getDynamicHeaders(this.configUrl, this.projectTargetType).subscribe((state: any) => {
+      if (_.has(state, 'headers')) {
+        this.dynamicHeaders = state.headers;
+      }
+    });
     this.getCollectionCategoryDefinition();
     /**
      * @description : this will fetch question Category configuration based on currently active route
