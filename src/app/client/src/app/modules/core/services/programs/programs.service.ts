@@ -118,7 +118,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   searchRegistry(reqData) {
     const option = {
-      url: 'reg/search',
+      url: this.config.urlConFig.URLS.OPENSABER.SEARCH,
       data:
       {
         id : 'open-saber.registry.search',
@@ -140,7 +140,7 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   addToRegistry(reqData) {
     const option = {
-      url: 'reg/add',
+      url: this.config.urlConFig.URLS.OPENSABER.ADD,
       data:
       {
         id : 'open-saber.registry.create',
@@ -378,10 +378,12 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   /**
-   * makes api call to get the textbooks for program
+   * makes api call to get the collections for program
    */
-  getCollectionList(request): Observable<ServerResponse> {
-    return this.http.post('learner/composite/v1/search', request).pipe(
+  getCollectionList(request, target_type?): Observable<ServerResponse> {
+    let url = 'learner/composite/v1/search';
+    if(target_type === 'questionSets') url = `action/${this.config.urlConFig.URLS.DOCKCONTENT.SEARCH}`;
+    return this.http.post(url, request).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {
           return throwError(data);
@@ -389,8 +391,6 @@ export class ProgramsService extends DataService implements CanActivate {
         return of(data);
       }));
   }
-
-
 
   /**
    * makes api call to get the textbooks for program
@@ -1129,7 +1129,7 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   updateToRegistry(reqData) {
     const option = {
-      url: 'reg/update',
+      url: this.config.urlConFig.URLS.OPENSABER.UPDATE,
       data: {
         id : 'open-saber.registry.update',
         request: reqData

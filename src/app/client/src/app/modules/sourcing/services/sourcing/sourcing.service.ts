@@ -183,11 +183,11 @@ export class SourcingService {
 
   createMediaAsset(req?: object) {
     const reqParam = {
-      url: this.configService.urlConFig.URLS.DOCKCONTENT.CREATE,
+      url: this.configService.urlConFig.URLS.ASSET.CREATE,
       data: {
         'request': {
-          content: {
-            contentType: 'Asset',
+          asset: {
+            primaryCategory: 'asset',
             language: ['English'],
             code: 'org.ekstep0.5375271337424472',
           }
@@ -255,7 +255,7 @@ export class SourcingService {
   }
   generatePreSignedUrl(req, contentId: any) {
     const reqParam = {
-      url: `content/v3/upload/url/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.PRE_SIGNED_UPLOAD_URL}/${contentId}`,
       data: {
         request: req
       }
@@ -264,13 +264,13 @@ export class SourcingService {
   }
   getVideo(videoId) {
     const reqParam = {
-      url: `content/v3/read/${videoId}`
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${videoId}`
     };
     return this.actionService.get(reqParam);
   }
   generateAssetCreateRequest(fileName, fileType, mediaType, creator) {
     return {
-      content: {
+      asset: {
         name: fileName,
         mediaType: mediaType,
         mimeType: fileType,
